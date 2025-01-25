@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - TZ=${TZ:-UTC}
+      - DEBUG=${DEBUG:-false}
+    container_name: mark_it

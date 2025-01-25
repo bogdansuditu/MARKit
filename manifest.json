@@ -1,0 +1,18 @@
+{
+  "name": "MARKit",
+  "short_name": "MARKit",
+  "icons": [
+    {
+      "src": "mmd_1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "mmd_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}
