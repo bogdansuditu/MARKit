@@ -569,6 +569,36 @@ try {
         sendJsonResponse(['success' => true, 'message' => ucfirst($type) . ' renamed successfully']);
     }
     
+    // Handle the resetApp action
+    if ($data['action'] === 'resetApp') {
+        logMessage("Processing resetApp action");
+        
+        $db = Database::getInstance();
+        $userid = $_SESSION['userid'];
+        
+        // Begin transaction
+        $db->beginTransaction();
+        
+        try {
+            // Delete all user data
+            $db->deleteUserData($userid);
+            
+            // Create root folder
+            $rootFolderId = $db->createFolder($userid, 'Root', null);
+            if (!$rootFolderId) {
+                throw new Exception('Failed to create root folder');
+            }
+            
+            // Commit transaction
+            $db->commit();
+            
+            sendJsonResponse(['success' => true]);
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+    
     // If we get here, no valid action was found
     throw new Exception('Invalid action: ' . $data['action']);
     

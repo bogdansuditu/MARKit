@@ -7,6 +7,7 @@ const documentState = {
     currentFilePath: null,
     hasChanges: false,
     lastSavedContent: '',
+    lastSavedTitle: '', // Add last saved title
     isNewDocument: true,
     currentNoteId: localStorage.getItem('currentNoteId') || null
 };
@@ -228,19 +229,20 @@ function newDocument() {
 // Function to reset document state
 function resetDocument() {
     console.log('Resetting document state'); // Debug
-    documentState.currentFilePath = null;
-    documentState.hasChanges = false;
-    documentState.lastSavedContent = '';
-    documentState.isNewDocument = true;
-    documentState.currentNoteId = null;
-    markdownEditor.setValue('');
-    updatePreview();
+    switchDocument('', null, '');
     console.log('New document state:', documentState); // Debug
 }
 
 // Function to handle content changes
 function handleContentChange() {
     const content = markdownEditor.getValue();
+    
+    // Ensure we're still editing the same document
+    if (documentState.currentNoteId !== activeDocumentId) {
+        console.warn('Document ID mismatch, ignoring change');
+        return;
+    }
+    
     updatePreview();
     
     // Don't mark empty new documents as changed
@@ -309,21 +311,11 @@ function performLoadFileContent(id) {
     .then(data => {
         if (data.error) throw new Error(data.error);
         
-        markdownEditor.setValue(data.content);
-        documentState.currentNoteId = noteid;
-        localStorage.setItem('currentNoteId', noteid); // Save current note ID
-        documentState.lastSavedContent = data.content;
-        documentState.hasChanges = false;
-        documentState.isNewDocument = false;
-        
-        updatePreview();
+        switchDocument(data.content, noteid, data.title);
         updateServerTime(data);
         
         // Refresh file list to show active state
         loadFiles(currentFolderId);
-        
-        // Store the current note ID when opening a note
-        localStorage.setItem('currentNoteId', noteid);
     })
     .catch(error => {
         console.error('Error loading file:', error);
@@ -333,10 +325,30 @@ function performLoadFileContent(id) {
 
 // Function to load files into the file list
 function loadFiles(folderId = null) {
+    // If there are unsaved changes, prompt to save before switching folders
+    if (documentState.hasChanges && shouldSave(markdownEditor.getValue())) {
+        promptSaveChanges().then(result => {
+            if (result !== 'cancel') {
+                performLoadFiles(folderId);
+            }
+        });
+    } else {
+        performLoadFiles(folderId);
+    }
+}
+
+// Helper function to perform the actual folder loading
+function performLoadFiles(folderId = null) {
     // If no folder ID is provided, use the current folder ID or get the root folder
     if (folderId === null) {
         folderId = currentFolderId || 1;  // Only default to 1 when explicitly loading folders
     }
+    
+    // Reset document state if we're switching folders and have a new document
+    if (folderId !== currentFolderId && documentState.isNewDocument) {
+        resetDocument();
+    }
+    
     currentFolderId = folderId;
     localStorage.setItem('currentFolderId', currentFolderId);
     
@@ -701,6 +713,49 @@ document.addEventListener('DOMContentLoaded', function() {
     if (lastNoteId) {
         loadFileContent(lastNoteId);
     }
+    
+    // Add reset app functionality
+    document.getElementById('reset-app-btn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Reset Application?',
+            text: 'This action will delete all your notes and folders. This action is irreversible!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, reset everything',
+            cancelButtonText: 'No, keep my data',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Call the reset endpoint
+                fetch('file_operations.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'resetApp'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    
+                    Swal.fire({
+                        title: 'Reset Complete',
+                        text: 'The application has been reset successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reload the page to show fresh state
+                        window.location.reload();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error resetting app:', error);
+                    Swal.fire('Error', 'Failed to reset application: ' + error.message, 'error');
+                });
+            }
+        });
+    });
 });
 
 // Update SweetAlert2 default options for consistent styling
@@ -1045,7 +1100,7 @@ function saveDocument(forcePath = null) {
         // Extract title from content or use existing one
         const title = documentState.isNewDocument ? 
             extractTitle(content) : 
-            (documentState.currentFilePath ? documentState.currentFilePath.split('/').pop().replace(/\.md$/, '') : extractTitle(content));
+            (documentState.currentNoteId ? documentState.lastSavedTitle : extractTitle(content));
         
         if (!title) {
             reject(new Error('Cannot save document without title'));
@@ -1071,6 +1126,7 @@ function saveDocument(forcePath = null) {
             documentState.isNewDocument = false;
             documentState.hasChanges = false;
             documentState.lastSavedContent = content;
+            documentState.lastSavedTitle = title; // Update last saved title
             documentState.currentNoteId = data.noteid;
             
             // Refresh the file list and recent files
@@ -1677,3 +1733,34 @@ document.addEventListener('click', (e) => {
 document.getElementById('menu-dropdown').addEventListener('click', (e) => {
     e.stopPropagation();
 });
+
+// Add activeDocumentId to track the current document
+let activeDocumentId = null;
+
+// Function to safely switch documents
+function switchDocument(content, noteId, title) {
+    // Step 1: Disable the editor temporarily to prevent change events
+    markdownEditor.setOption('readOnly', true);
+    
+    // Step 2: Clear the editor's state completely
+    markdownEditor.setValue('');
+    markdownEditor.clearHistory();
+    
+    // Step 3: Update document state
+    activeDocumentId = noteId;
+    documentState.currentNoteId = noteId;
+    documentState.lastSavedContent = content;
+    documentState.lastSavedTitle = title;
+    documentState.hasChanges = false;
+    documentState.isNewDocument = !noteId;
+    
+    // Step 4: Set the new content
+    markdownEditor.setValue(content || '');
+    
+    // Step 5: Re-enable the editor
+    markdownEditor.setOption('readOnly', false);
+    
+    // Step 6: Update UI
+    updatePreview();
+    localStorage.setItem('currentNoteId', noteId);
+}

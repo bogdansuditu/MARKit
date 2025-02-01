@@ -107,6 +107,10 @@ if (!isLoggedIn()) {
                             <i class="fas fa-file-pdf"></i>
                             <span>Export as PDF</span>
                         </button>
+                        <button id="reset-app-btn" class="menu-item">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Reset Application</span>
+                        </button>
                         <button id="logout-btn" class="menu-item">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
