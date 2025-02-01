@@ -1759,3 +1759,165 @@
         background: transparent !important;
     }
     
+    /* Folder Tree Styles */
+    .folder-tree-container {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 15px;
+        text-align: left;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+
+    .folder-tree {
+        list-style: none;
+        padding-left: 15px;
+        margin: 0;
+    }
+
+    .folder-tree > li {
+        margin: 3px 0;
+    }
+
+    .folder-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+    }
+
+    .folder-item:not(.disabled):hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .folder-item.selected {
+        background-color: #e3f2fd;
+        border-color: #90caf9;
+    }
+
+    .folder-item.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #f1f3f5;
+    }
+
+    .folder-item i {
+        color: #ffd700;
+        font-size: 1.1em;
+        width: 20px;
+        text-align: center;
+    }
+
+    .folder-item span {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .selected-folder-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #dee2e6;
+        color: #495057;
+        font-size: 0.9em;
+    }
+
+    .selected-folder-name {
+        font-weight: 500;
+        color: #2196f3;
+    }
+
+    /* Improve SweetAlert dialog for folder tree */
+    .swal2-popup.swal2-modal {
+        width: 32em;
+    }
+
+    .swal2-title {
+        font-size: 1.5em !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Move Note Dialog Styles */
+    .move-note-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .move-note-dialog .selected-folder-info {
+        padding: 10px;
+        color: var(--text-color);
+        font-size: 0.9em;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .move-note-dialog .selected-folder-name {
+        font-weight: 500;
+        color: var(--link-color);
+    }
+
+    .move-note-dialog .folder-tree-scroll {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .move-note-dialog .file-list-container {
+        margin: 0;
+        border: none;
+    }
+
+    .move-note-dialog .list-group-item {
+        height: 48px;
+    }
+
+    .move-note-dialog .list-group-item.selected {
+        background: var(--hover-color);
+        border-left: 3px solid var(--accent-color);
+        padding-left: 9px;
+        position: relative;
+    }
+
+    .move-note-dialog .list-group-item.selected::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        box-shadow: 0 0 0 2px var(--surface-color);
+    }
+
+    .move-note-dialog .list-group-item.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Theme support */
+    [data-theme="dark"] .move-note-dialog .selected-folder-info {
+        color: var(--text-color-dark);
+        border-color: var(--border-color-dark);
+    }
+
+    [data-theme="dark"] .move-note-dialog .selected-folder-name {
+        color: var(--accent-color);
+    }
+
+    [data-theme="sepia"] .move-note-dialog .selected-folder-info {
+        color: var(--text-color-sepia);
+        border-color: var(--border-color-sepia);
+    }
+
+    [data-theme="sepia"] .move-note-dialog .selected-folder-name {
+        color: var(--accent-color);
+    }

@@ -993,7 +993,7 @@ function showContextMenu(e, item) {
         {
             label: 'Move',
             icon: 'fa-folder-open',
-            action: () => console.log('Move functionality to be implemented')
+            action: () => moveNote(item.id.replace('note_', ''), currentFolderId)
         }
     ];
     
@@ -1090,6 +1090,162 @@ async function handleRename(id, type) {
             timer: 3000
         });
     }
+}
+
+// Function to move note
+function moveNote(noteId, currentFolderId) {
+    fetch('file_operations.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getAllFoldersFlat' })
+    })
+    .then(response => response.json())
+    .then(data => {
+        let selectedFolderId = null;
+        const folderTreeHtml = buildFolderTreeHtml(data.folders, currentFolderId);
+        
+        Swal.fire({
+            title: 'Move Note',
+            html: `
+                <div class="move-note-dialog">
+                    <div class="folder-tree-scroll">
+                        ${folderTreeHtml}
+                    </div>
+                    <div class="selected-folder-info">
+                        <span>Selected folder: </span>
+                        <span class="selected-folder-name">None</span>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Move',
+            cancelButtonText: 'Cancel',
+            didOpen: () => {
+                // Add click handlers for folder items
+                document.querySelectorAll('.list-group-item:not(.disabled)').forEach(item => {
+                    item.addEventListener('click', () => {
+                        // Remove previous selection
+                        document.querySelectorAll('.list-group-item').forEach(i => i.classList.remove('selected'));
+                        // Add selection to clicked item
+                        item.classList.add('selected');
+                        // Update selected folder ID
+                        selectedFolderId = item.dataset.folderId;
+                        // Update selected folder name display
+                        const folderName = item.querySelector('.folder-name').textContent;
+                        document.querySelector('.selected-folder-name').textContent = folderName;
+                    });
+                });
+            },
+            preConfirm: () => {
+                if (!selectedFolderId) {
+                    Swal.showValidationMessage('Please select a folder');
+                    return false;
+                }
+                return selectedFolderId;
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                // Move the note to selected folder
+                fetch('file_operations.php', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'moveNote',
+                        noteid: noteId,
+                        targetFolderId: result.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Note moved successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            // Refresh the current folder view
+                            loadFiles(currentFolderId);
+                        });
+                    } else {
+                        throw new Error(data.error || 'Failed to move note');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message
+                    });
+                });
+            }
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to load folders'
+        });
+    });
+}
+
+// Function to build folder tree HTML
+function buildFolderTreeHtml(folders, currentFolderId) {
+    let html = '<div class="file-list-container"><ul id="file-list" class="list-group">';
+    
+    // Create a map of parent folders to their children
+    const folderMap = new Map();
+    folders.forEach(folder => {
+        folderMap.set(folder.folderid, {
+            ...folder,
+            children: []
+        });
+    });
+    
+    // Build parent-child relationships
+    folders.forEach(folder => {
+        if (folder.parent_folderid && folderMap.has(folder.parent_folderid)) {
+            folderMap.get(folder.parent_folderid).children.push(folderMap.get(folder.folderid));
+        }
+    });
+    
+    // Get root folders (parent_folderid === null)
+    const rootFolders = Array.from(folderMap.values()).filter(folder => 
+        folder.parent_folderid === null
+    );
+    
+    function buildFolderItem(folder, level = 0) {
+        const isDisabled = folder.folderid === currentFolderId;
+        const isChild = folder.parent_folderid !== null;
+        
+        let itemHtml = `
+            <li class="list-group-item ${isDisabled ? 'disabled' : ''}" data-folder-id="${folder.folderid}">
+                <div class="content-wrapper">
+                    <div class="icon-container" style="padding-left: ${level * 20}px">
+                        <i class="fas ${isChild ? 'fa-folder' : 'fa-folder-open'}"></i>
+                    </div>
+                    <div class="item-content">
+                        <span class="folder-name">${folder.name}</span>
+                    </div>
+                </div>
+            </li>
+        `;
+        
+        if (folder.children && folder.children.length > 0) {
+            folder.children.forEach(child => {
+                itemHtml += buildFolderItem(child, level + 1);
+            });
+        }
+        
+        return itemHtml;
+    }
+    
+    rootFolders.forEach(folder => {
+        html += buildFolderItem(folder);
+    });
+    
+    html += '</ul></div>';
+    return html;
 }
 
 // Function to save document

@@ -220,8 +220,15 @@ try {
     // Handle the load action
     if ($data['action'] === 'load') {
         logMessage("Processing load action");
-        if (!isset($data['noteid'])) {
-            throw new Exception('No note ID provided');
+        
+        // If noteid is null or "null", return empty content
+        if (!isset($data['noteid']) || $data['noteid'] === null || $data['noteid'] === 'null') {
+            logMessage("No note ID provided or null note ID - returning empty content");
+            sendJsonResponse([
+                'content' => '',
+                'title' => ''
+            ]);
+            return;
         }
         
         $note = $db->getNote($data['noteid'], $userid);
@@ -529,6 +536,60 @@ try {
             $db->rollbackTransaction();
             throw new Exception('Import failed: ' . $e->getMessage());
         }
+    }
+    
+    // Handle the moveNote action
+    if ($data['action'] === 'moveNote') {
+        logMessage("Processing moveNote action");
+        
+        if (!isset($data['noteid']) || !isset($data['targetFolderId'])) {
+            throw new Exception('Missing required fields for move operation');
+        }
+        
+        $noteid = intval($data['noteid']);
+        $targetFolderId = intval($data['targetFolderId']);
+        $userid = $_SESSION['userid'];
+        
+        // Move the note
+        if (!$db->moveNote($noteid, $userid, $targetFolderId)) {
+            throw new Exception('Failed to move note');
+        }
+        
+        sendJsonResponse(['success' => true]);
+    }
+
+    // Handle getAllFoldersFlat action to get a flat list of all folders
+    if ($data['action'] === 'getAllFoldersFlat') {
+        logMessage("Processing getAllFoldersFlat action");
+        
+        $userid = $_SESSION['userid'];
+        // Get all folders for the user using getFoldersByUser
+        $folders = $db->getFoldersByUser($userid);
+        
+        // Check if root folder exists in the list
+        $hasRootFolder = false;
+        foreach ($folders as &$folder) {
+            if ($folder['folderid'] === 1) {
+                // Update root folder name to "."
+                $folder['name'] = '.';
+                $hasRootFolder = true;
+                break;
+            }
+        }
+        unset($folder); // Unset reference
+        
+        // Add root folder only if it doesn't exist
+        if (!$hasRootFolder) {
+            array_unshift($folders, [
+                'folderid' => 1,
+                'parent_folderid' => null,
+                'name' => '.',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        }
+        
+        sendJsonResponse(['success' => true, 'folders' => $folders]);
     }
     
     // Handle the rename action
