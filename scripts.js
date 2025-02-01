@@ -739,14 +739,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.error) throw new Error(data.error);
                     
+                    // Clear editor state
+                    markdownEditor.setValue('');
+                    documentState.currentNoteId = null;
+                    documentState.lastSavedContent = '';
+                    
                     Swal.fire({
                         title: 'Reset Complete',
                         text: 'The application has been reset successfully.',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        // Reload the page to show fresh state
-                        window.location.reload();
+                        // Load root folder and refresh UI
+                        loadFiles(1); // Root folder should be ID 1
+                        loadRecentModifiedFiles();
                     });
                 })
                 .catch(error => {

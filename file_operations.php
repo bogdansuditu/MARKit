@@ -576,27 +576,19 @@ try {
         $db = Database::getInstance();
         $userid = $_SESSION['userid'];
         
-        // Begin transaction
-        $db->beginTransaction();
+        // Delete all user data
+        logMessage("Deleting user data for user: " . $userid);
+        $db->deleteUserData($userid);
         
-        try {
-            // Delete all user data
-            $db->deleteUserData($userid);
-            
-            // Create root folder
-            $rootFolderId = $db->createFolder($userid, 'Root', null);
-            if (!$rootFolderId) {
-                throw new Exception('Failed to create root folder');
-            }
-            
-            // Commit transaction
-            $db->commit();
-            
-            sendJsonResponse(['success' => true]);
-        } catch (Exception $e) {
-            $db->rollback();
-            throw $e;
+        // Create root folder
+        logMessage("Creating root folder for user: " . $userid);
+        $rootFolderId = $db->createFolder($userid, 'Root', null);
+        if (!$rootFolderId) {
+            throw new Exception('Failed to create root folder');
         }
+        
+        logMessage("Reset completed successfully");
+        sendJsonResponse(['success' => true]);
     }
     
     // If we get here, no valid action was found
