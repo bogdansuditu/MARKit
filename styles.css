@@ -1963,3 +1963,9 @@
         border-radius: 4px;
         font-size: 11px;
     }
+
+    .word-count {
+        color: var(--text-muted);
+        font-size: 0.9em;
+        margin-left: 8px;
+    }

@@ -1971,6 +1971,13 @@ async function updateStatusBar() {
             pathEl.innerHTML += '<span class="separator">/</span>' + documentState.lastSavedTitle;
         }
 
+        // Add word count
+        const wordCount = markdownEditor.getValue().trim().split(/\s+/).length;
+        const wordCountEl = document.createElement('span');
+        wordCountEl.className = 'word-count';
+        wordCountEl.innerHTML = `<span class="separator">|</span> (${wordCount} words)`;
+        pathEl.appendChild(wordCountEl);
+
         // Update tags
         const tagsEl = document.getElementById('file-tags');
         if (data.tags && data.tags.length > 0) {
