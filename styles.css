@@ -304,7 +304,7 @@
     #main-content {
         display: flex;
         gap: 5px;
-        height: calc(100vh - 80px);
+        height: calc(100vh - 100px); /* Adjusted to account for top bar (75px) + status bar (30px) + padding (10px) */
     }
     
     /* File Panel */
@@ -596,6 +596,7 @@
         gap: 5px;
         transition: all 0.3s ease;
         overflow: hidden; /* Prevent container overflow */
+        height: calc(100%);
     }
     
     #editor-panel,
@@ -1920,4 +1921,45 @@
 
     [data-theme="sepia"] .move-note-dialog .selected-folder-name {
         color: var(--accent-color);
+    }
+    
+    /* Status Bar */
+    #status-bar {
+        height: 20px;
+        border-top: 1px solid var(--separator-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        font-size: 12px;
+        color: var(--text-color);
+        margin-top: 5px;
+    }
+
+    #file-path {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #file-path .separator {
+        color: var(--accent-color);
+        margin: 0 2px;
+    }
+
+    #file-tags {
+        display: flex;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    #file-tags .tag {
+        background: var(--tag-bg, var(--hover-color));
+        color: var(--tag-color, var(--text-color));
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
     }

@@ -520,7 +520,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Error navigating to parent folder:', error);
                 });
-            }
+            };
+            updateStatusBar();
         });
     }
     
@@ -1503,8 +1504,8 @@ async function exportToPDF() {
         el.style.removeProperty('background-color');
         el.style.removeProperty('box-shadow');
         el.style.removeProperty('border-radius');
-    }
-    
+        }
+
     // Add the cleaned content to the container
     container.appendChild(contentClone);
     
@@ -1925,4 +1926,61 @@ function switchDocument(content, noteId, title) {
     // Step 6: Update UI
     updatePreview();
     localStorage.setItem('currentNoteId', noteId);
+    updateStatusBar();
+}
+
+async function updateStatusBar() {
+    const noteId = documentState.currentNoteId;
+
+    try {
+        const response = await fetch('file_operations.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'getNoteStatus',
+                noteid: noteId
+            })
+        });
+        
+        if (!response.ok) {
+            alert('Network response was not ok');
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        
+        if (data.error) {
+            console.error('Error getting note status:', data.error);
+            return;
+        }
+        // Update path
+        const pathEl = document.getElementById('file-path');
+        if (data.path && data.path.length > 0) {
+            pathEl.innerHTML = data.path.map((folder, index) => {
+                return `<span class="folder-name">${folder.name}</span>${
+                    index < data.path.length - 1 ? '<span class="separator">/</span>' : ''
+                }`;
+            }).join('');
+        } else {
+            pathEl.innerHTML = '<span class="folder-name">Root</span>';
+        }
+        
+        if (documentState.lastSavedTitle) {
+            pathEl.innerHTML += '<span class="separator">/</span>' + documentState.lastSavedTitle;
+        }
+
+        // Update tags
+        const tagsEl = document.getElementById('file-tags');
+        if (data.tags && data.tags.length > 0) {
+            tagsEl.innerHTML = data.tags.map(tag => 
+                `<span class="tag">${tag}</span>`
+            ).join('');
+        } else {
+            tagsEl.innerHTML = '';
+        }
+    } catch (error) {
+        console.error('Error updating status bar:', error);
+    }
 }

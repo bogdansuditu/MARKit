@@ -150,6 +150,10 @@ if (!isLoggedIn()) {
                 </div>
             </div>
         </div>
+        <div id="status-bar">
+            <div id="file-path"></div>
+            <div id="file-tags"></div>
+        </div>
     </div>
     
     <!-- Scripts -->

@@ -185,6 +185,36 @@ function sendJsonResponse($data) {
     }
 }
 
+// Function to get note status (path and tags)
+function getNoteStatus($noteid) {
+    if (!$noteid) {
+        return ['error' => 'Invalid note ID'];
+    }
+
+    $db = Database::getInstance();
+    
+    // Get note details to find the folder
+    $stmt = $db->prepare("SELECT folderid FROM notes WHERE noteid = :noteid");
+    $stmt->bindValue(':noteid', $noteid, SQLITE3_INTEGER);
+    $result = $stmt->execute();
+    $note = $result->fetchArray(SQLITE3_ASSOC);
+    
+    if (!$note) {
+        return ['error' => 'Note not found'];
+    }
+    
+    // Get folder path
+    $path = $db->getStatusFolderPath($note['folderid']);
+    
+    // Get tags
+    $tags = $db->getNoteTags($noteid);
+    
+    return [
+        'path' => $path,
+        'tags' => $tags
+    ];
+}
+
 // Check authentication
 if (!isLoggedIn()) {
     logMessage("Not authenticated - Session status: " . session_status());
@@ -650,6 +680,15 @@ try {
         
         logMessage("Reset completed successfully");
         sendJsonResponse(['success' => true]);
+    }
+    
+    // Handle the getNoteStatus action
+    if ($data['action'] === 'getNoteStatus') {
+        $noteid = isset($data['noteid']) ? intval($data['noteid']) : null;
+        $result = getNoteStatus($noteid);
+        sendJsonResponse($result);
+        logMessage("Get note status for note: " . $noteid);
+        logMessage("Get note status result: " . json_encode($result));
     }
     
     // If we get here, no valid action was found

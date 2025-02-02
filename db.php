@@ -248,6 +248,7 @@ class Database {
                 WHERE folderid = :folderid
             ");
             $stmt->bindValue(':folderid', $currentFolderId, SQLITE3_INTEGER);
+            
             $folder = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
             
             if (!$folder) break;
@@ -257,6 +258,37 @@ class Database {
         }
         
         return implode('/', $path);
+    }
+
+    public function getStatusFolderPath($folderid) {
+        if (!$folderid) return [];
+        
+        $path = [];
+        $currentFolderId = $folderid;
+        
+        while ($currentFolderId) {
+            $stmt = $this->prepare("
+                SELECT folderid, name, parent_folderid
+                FROM folders
+                WHERE folderid = :folderid
+            ");
+            $stmt->bindValue(':folderid', $currentFolderId, SQLITE3_INTEGER);
+            $result = $stmt->execute();
+            $folder = $result->fetchArray(SQLITE3_ASSOC);
+            
+            if (!$folder) break;
+            
+            if ($folder['folderid'] != 1) { // Don't include root folder
+                array_unshift($path, [
+                    'id' => $folder['folderid'],
+                    'name' => $folder['name']
+                ]);
+            }
+            
+            $currentFolderId = $folder['parent_folderid'];
+        }
+        
+        return $path;
     }
 
     public function getFolderContents($userid, $folderid = null) {
@@ -638,6 +670,23 @@ class Database {
             $notes[] = $row;
         }
         return $notes;
+    }
+
+    public function getNoteTags($noteid) {
+        $stmt = $this->prepare("
+            SELECT DISTINCT tag
+            FROM tags
+            WHERE noteid = :noteid
+            ORDER BY tag ASC
+        ");
+        $stmt->bindValue(':noteid', $noteid, SQLITE3_INTEGER);
+        $result = $stmt->execute();
+        
+        $tags = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $tags[] = $row['tag'];
+        }
+        return $tags;
     }
 
     // Recent modifications
