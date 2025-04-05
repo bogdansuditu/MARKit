@@ -908,7 +908,6 @@
     
     .dark #editor-panel {
         background-color: var(--dark-editor-bg);
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.9);
     }
     
     .dark #preview-panel {
