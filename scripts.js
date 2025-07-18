@@ -54,12 +54,12 @@ function updatePreview() {
     }
 }
 
-// Function to sync scroll positions
-function syncScroll(source, target, sourceIsEditor = true) {
-    // Clear any pending scroll timeout
-    if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-    }
+// // Function to sync scroll positions
+// function syncScroll(source, target, sourceIsEditor = true) {
+//     // Clear any pending scroll timeout
+//     if (scrollTimeout) {
+//         clearTimeout(scrollTimeout);
+//     }
 
     // Get source scroll info
     const sourceInfo = sourceIsEditor ? source.getScrollInfo() : {
@@ -527,12 +527,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up the input event listener
     markdownEditor.on('change', handleContentChange);
-    markdownEditor.on('scroll', () => {
-        syncScroll(markdownEditor, markdownPreview, true);
-    });
-    markdownPreview.addEventListener('scroll', () => {
-        syncScroll(markdownPreview, markdownEditor, false);
-    });
+    // markdownEditor.on('scroll', () => {
+    //     syncScroll(markdownEditor, markdownPreview, true);
+    // });
+    // markdownPreview.addEventListener('scroll', () => {
+    //     syncScroll(markdownPreview, markdownEditor, false);
+    // });
     
     // Add event listeners for export/import
     if (exportButton) {
@@ -578,10 +578,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .CodeMirror .cm-link { color: var(--accent-color); }
         .CodeMirror .cm-url { color: var(--accent-color); }
         .CodeMirror .cm-string { color: var(--accent-color); }
+        .CodeMirror span.cm-variable-2 { color: var(--accent-color) !important; }
+        .CodeMirror span.cm-variable-3 { color: var(--accent-color) !important; }
+        .CodeMirror span.cm-variable-4 { color: var(--accent-color) !important; }
         .CodeMirror-gutters {
             border-right: 1px solid var(--separator-color);
             background-color: var(--bg-color);
-        }
+        }   
         .CodeMirror-linenumber {
             color: var(--text-color);
             opacity: 0.5;

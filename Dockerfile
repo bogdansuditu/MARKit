@@ -24,13 +24,20 @@ session.use_only_cookies = On\n\
 
 # Copy application files
 COPY . /var/www/html/
+RUN mkdir /var/www/sqlite_data
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+RUN chown -R www-data:www-data /var/www/sqlite_data \
+    && chmod -R 777 /var/www/sqlite_data
+
+RUN alias l="ls -alhG"
+
 # Set working directory
 WORKDIR /var/www/html/
+
 
 # Expose port 80
 EXPOSE 80

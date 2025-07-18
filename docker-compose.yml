@@ -6,7 +6,11 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www/html
+      - sqlite_data:/var/www/sqlite_data
     environment:
       - TZ=${TZ:-UTC}
       - DEBUG=${DEBUG:-false}
     container_name: mark_it
+
+volumes:
+  sqlite_data:

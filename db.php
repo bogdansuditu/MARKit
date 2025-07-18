@@ -2,7 +2,7 @@
 class Database {
     private static $instance = null;
     private $db;
-    private $dbPath = '/var/www/html/notes.db';
+    private $dbPath = '/var/www/sqlite_data/notes.db';
     private $timezoneOffset;
     private $transactionLevel = 0;
 
