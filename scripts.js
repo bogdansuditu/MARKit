@@ -54,12 +54,12 @@ function updatePreview() {
     }
 }
 
-// // Function to sync scroll positions
-// function syncScroll(source, target, sourceIsEditor = true) {
-//     // Clear any pending scroll timeout
-//     if (scrollTimeout) {
-//         clearTimeout(scrollTimeout);
-//     }
+// Function to sync scroll positions
+function syncScroll(source, target, sourceIsEditor = true) {
+    // Clear any pending scroll timeout
+    if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+    }
 
     // Get source scroll info
     const sourceInfo = sourceIsEditor ? source.getScrollInfo() : {
