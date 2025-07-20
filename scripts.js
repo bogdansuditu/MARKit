@@ -47,6 +47,35 @@ function updatePreview() {
     
     markdownPreview.innerHTML = marked.parse(contentWithoutTags);
     
+    // Apply Prism.js syntax highlighting to code blocks
+    if (typeof Prism !== 'undefined') {
+        // Add line numbers and toolbar classes to code blocks
+        const codeBlocks = markdownPreview.querySelectorAll('pre code');
+        codeBlocks.forEach(codeBlock => {
+            const pre = codeBlock.parentNode;
+            if (pre && pre.tagName === 'PRE') {
+                // Add classes for Prism.js plugins
+                pre.classList.add('line-numbers');
+                codeBlock.classList.add('toolbar');
+                
+                // Detect language from className or add generic class
+                let hasLanguageClass = false;
+                for (let className of codeBlock.classList) {
+                    if (className.startsWith('language-')) {
+                        hasLanguageClass = true;
+                        break;
+                    }
+                }
+                if (!hasLanguageClass) {
+                    codeBlock.classList.add('language-markup');
+                }
+            }
+        });
+        
+        // Apply Prism highlighting
+        Prism.highlightAllUnder(markdownPreview);
+    }
+    
     // If preview height changed, adjust scroll position proportionally
     if (previewScrollInfo.height > 0) {
         const ratio = previewScrollInfo.top / previewScrollInfo.height;
@@ -478,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         mode: 'markdown',
         lineNumbers: false,
         lineWrapping: true,
-        viewportMargin: Infinity,
+        viewportMargin: 50, // Changed from Infinity for better performance on large files
         themeVars: currentTheme
     });
     
@@ -1502,12 +1531,53 @@ async function exportToPDF() {
     for (let el of elements) {
         // Remove theme-specific classes
         el.classList.remove('light', 'dark', 'sepia');
-        // Remove any inline background styles
+        // Remove Prism.js specific classes that might interfere with PDF
+        el.classList.remove('line-numbers', 'toolbar');
+        // Remove any inline styles that might carry over theme colors
         el.style.removeProperty('background');
         el.style.removeProperty('background-color');
         el.style.removeProperty('box-shadow');
         el.style.removeProperty('border-radius');
+        el.style.removeProperty('color');
+        el.style.removeProperty('text-shadow');
+        
+        // Force light theme styles for code elements
+        if (el.tagName === 'PRE' && (el.classList.contains('language-') || Array.from(el.classList).some(cls => cls.startsWith('language-')))) {
+            el.style.setProperty('background', '#f7f7f7', 'important');
+            el.style.setProperty('color', '#1a202c', 'important');
+            el.style.setProperty('border', '1px solid #e2e8f0', 'important');
         }
+        
+        if (el.tagName === 'CODE') {
+            el.style.setProperty('color', '#1a202c', 'important');
+            el.style.setProperty('text-shadow', 'none', 'important');
+            if (el.parentNode && el.parentNode.tagName === 'PRE') {
+                // Code inside pre blocks
+                el.style.setProperty('background', 'transparent', 'important');
+            } else {
+                // Inline code
+                el.style.setProperty('background', '#f7f7f7', 'important');
+                el.style.setProperty('border', '1px solid #e2e8f0', 'important');
+            }
+        }
+        
+        // Remove all Prism.js token classes and force dark text
+        if (el.classList.contains('token')) {
+            el.style.setProperty('color', '#1a202c', 'important');
+            el.style.setProperty('text-shadow', 'none', 'important');
+        }
+    }
+    
+    // Remove Prism.js toolbars and line number elements for clean PDF
+    const toolbars = contentClone.querySelectorAll('.toolbar');
+    toolbars.forEach(toolbar => toolbar.remove());
+    
+    const lineNumberRows = contentClone.querySelectorAll('.line-numbers-rows');
+    lineNumberRows.forEach(row => row.remove());
+    
+    // Remove any remaining Prism.js wrapper elements
+    const codeToolbars = contentClone.querySelectorAll('.code-toolbar > .toolbar');
+    codeToolbars.forEach(toolbar => toolbar.remove());
 
     // Add the cleaned content to the container
     container.appendChild(contentClone);

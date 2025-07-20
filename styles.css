@@ -1969,3 +1969,241 @@
         font-size: 0.9em;
         margin-left: 8px;
     }
+
+    /* Prism.js theme integration - override default Prism themes */
+    .light #markdown-preview pre[class*="language-"] {
+        background: var(--light-code-bg) !important;
+        border: 1px solid var(--light-code-border) !important;
+        color: var(--light-code-text) !important;
+    }
+
+    .light #markdown-preview code[class*="language-"] {
+        color: var(--light-code-text) !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview pre[class*="language-"] {
+        background: var(--dark-code-bg) !important;
+        border: 1px solid var(--dark-code-border) !important;
+        color: var(--dark-code-text) !important;
+    }
+
+    .dark #markdown-preview code[class*="language-"] {
+        color: var(--dark-code-text) !important;
+        text-shadow: none !important;
+    }
+
+    /* Override all Prism.js syntax highlighting colors for dark theme */
+    .dark #markdown-preview .token.comment,
+    .dark #markdown-preview .token.prolog,
+    .dark #markdown-preview .token.doctype,
+    .dark #markdown-preview .token.cdata {
+        color: #6a9955 !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.punctuation {
+        color: var(--dark-code-text) !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.property,
+    .dark #markdown-preview .token.tag,
+    .dark #markdown-preview .token.boolean,
+    .dark #markdown-preview .token.number,
+    .dark #markdown-preview .token.constant,
+    .dark #markdown-preview .token.symbol,
+    .dark #markdown-preview .token.deleted {
+        color: #f92672 !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.selector,
+    .dark #markdown-preview .token.attr-name,
+    .dark #markdown-preview .token.string,
+    .dark #markdown-preview .token.char,
+    .dark #markdown-preview .token.builtin,
+    .dark #markdown-preview .token.inserted {
+        color: #a6e22e !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.operator,
+    .dark #markdown-preview .token.entity,
+    .dark #markdown-preview .token.url,
+    .dark #markdown-preview .language-css .token.string,
+    .dark #markdown-preview .style .token.string {
+        color: #66d9ef !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.atrule,
+    .dark #markdown-preview .token.attr-value,
+    .dark #markdown-preview .token.keyword {
+        color: #ae81ff !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.function,
+    .dark #markdown-preview .token.class-name {
+        color: #fd971f !important;
+        text-shadow: none !important;
+    }
+
+    .dark #markdown-preview .token.regex,
+    .dark #markdown-preview .token.important,
+    .dark #markdown-preview .token.variable {
+        color: #fd971f !important;
+        text-shadow: none !important;
+    }
+
+    .sepia #markdown-preview pre[class*="language-"] {
+        background: var(--sepia-code-bg) !important;
+        border: 1px solid var(--sepia-code-border) !important;
+        color: var(--sepia-code-text) !important;
+    }
+
+    .sepia #markdown-preview code[class*="language-"] {
+        color: var(--sepia-code-text) !important;
+        text-shadow: none !important;
+    }
+
+    /* Prism.js line numbers styling */
+    .light #markdown-preview pre.line-numbers {
+        padding-left: 3.8em !important;
+    }
+
+    .dark #markdown-preview pre.line-numbers {
+        padding-left: 3.8em !important;
+    }
+
+    .sepia #markdown-preview pre.line-numbers {
+        padding-left: 3.8em !important;
+    }
+
+    /* Prism.js line numbers gutter */
+    .light #markdown-preview .line-numbers .line-numbers-rows {
+        border-right: 1px solid var(--light-code-border) !important;
+    }
+
+    .dark #markdown-preview .line-numbers .line-numbers-rows {
+        border-right: 1px solid var(--dark-code-border) !important;
+    }
+
+    .sepia #markdown-preview .line-numbers .line-numbers-rows {
+        border-right: 1px solid var(--sepia-code-border) !important;
+    }
+
+    /* Prism.js toolbar styling */
+    #markdown-preview div.code-toolbar {
+        position: relative;
+        margin: 1em 0;
+    }
+
+    #markdown-preview div.code-toolbar > .toolbar {
+        position: absolute;
+        top: 0.3em;
+        right: 0.2em;
+        transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+        z-index: 10;
+    }
+
+    #markdown-preview div.code-toolbar:hover > .toolbar {
+        opacity: 1;
+    }
+
+    #markdown-preview div.code-toolbar > .toolbar .toolbar-item {
+        display: inline-block;
+    }
+
+    #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button {
+        background: var(--accent-color);
+        color: white;
+        font-size: 0.8em;
+        padding: 0.3em 0.5em;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+    }
+
+    #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button:hover {
+        background: color-mix(in srgb, var(--accent-color) 80%, black);
+        transform: translateY(-1px);
+    }
+
+    #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button:focus {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
+    }
+
+    /* Theme-specific copy button colors */
+    .light #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button {
+        background: var(--light-accent);
+    }
+
+    .light #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button:hover {
+        background: color-mix(in srgb, var(--light-accent) 80%, black);
+    }
+
+    .dark #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button {
+        background: var(--dark-accent);
+    }
+
+    .dark #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button:hover {
+        background: color-mix(in srgb, var(--dark-accent) 80%, black);
+    }
+
+    .sepia #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button {
+        background: var(--sepia-accent);
+    }
+
+    .sepia #markdown-preview div.code-toolbar > .toolbar .toolbar-item > button:hover {
+        background: color-mix(in srgb, var(--sepia-accent) 80%, black);
+    }
+
+    /* PDF theme overrides for Prism.js */
+    .pdf-theme pre[class*="language-"],
+    .pdf-theme pre {
+        background: var(--pdf-code-bg) !important;
+        border: 1px solid #e2e8f0 !important;
+        color: var(--pdf-code-text) !important;
+    }
+
+    .pdf-theme code[class*="language-"],
+    .pdf-theme code {
+        color: var(--pdf-code-text) !important;
+        background: var(--pdf-code-bg) !important;
+        text-shadow: none !important;
+    }
+
+    .pdf-theme .token {
+        color: var(--pdf-code-text) !important;
+        text-shadow: none !important;
+    }
+
+    .pdf-theme .line-numbers .line-numbers-rows {
+        border-right: 1px solid #e2e8f0 !important;
+    }
+
+    /* Hide toolbar in PDF export */
+    .pdf-theme div.code-toolbar > .toolbar,
+    .pdf-theme .toolbar {
+        display: none !important;
+    }
+
+    /* Ensure all text in PDF is dark for readability */
+    .pdf-theme * {
+        color: var(--pdf-text) !important;
+        text-shadow: none !important;
+    }
+
+    .pdf-theme h1, .pdf-theme h2, .pdf-theme h3, .pdf-theme h4, .pdf-theme h5, .pdf-theme h6 {
+        color: var(--pdf-h1) !important;
+    }
+
+    .pdf-theme a {
+        color: var(--pdf-link) !important;
+    }
