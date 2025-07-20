@@ -3,8 +3,8 @@
     --light-bg: #ffffff;
     --light-text: #2c3e50;
     --light-surface: #f8f9fa;
-    --light-accent: #6C25CF; /* Primary color */
-    --light-hover: rgba(108, 37, 207, 0.2); /* Primary color with low opacity */
+    --light-accent: #805ad5; /* Faded blueish-magenta primary color */
+    --light-hover: rgba(128, 90, 213, 0.2); /* Faded blueish-magenta with low opacity */
     --light-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
     --light-separator: rgba(0, 0, 0, 0.03);
     --light-code-bg: #f8f9fa;
@@ -14,17 +14,17 @@
     /* Light Theme Markdown Colors */
     --light-h1: #2c3e50;
     --light-h2: #34495e;
-    --light-h3: #6C25CF; /* Primary color */
-    --light-link: #a375e9; /* Lighter shade of primary color */
-    --light-code: #4c1b97; /* Darker shade of primary color */
-    --light-quote: #36127a; /* Deep shade of primary color */
+    --light-h3: #805ad5; /* Faded blueish-magenta primary color */
+    --light-link: #9f7aea; /* Lighter purple shade */
+    --light-code: #553c9a; /* Darker purple shade */
+    --light-quote: #44337a; /* Deep purple shade */
     
     /* Dark Theme */
     --dark-bg: #1a1a1a;
     --dark-text: #e9ecef;
     --dark-surface: #252525;
-    --dark-accent: #9e48e8; /* Brighter shade of primary color for better visibility */
-    --dark-hover: rgba(158, 72, 232, 0.2); /* Brighter shade of primary color with low opacity */
+    --dark-accent: #b794f6; /* Soft blueish-magenta for better visibility in dark mode */
+    --dark-hover: rgba(183, 148, 246, 0.2); /* Soft blueish-magenta with low opacity */
     --dark-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     --dark-separator: rgba(255, 255, 255, 0.06);
     --dark-editor-bg: #2d2d2d;
@@ -34,14 +34,14 @@
     --dark-code-border: #404040;
     
     /* Dark Theme Markdown Colors */
-    --dark-h1: #9e48e8; /* Brighter shade of primary color */
-    --dark-h2: #c578f7; /* Lighter shade of primary color */
-    --dark-h3: #e1a0ff; /* Even lighter shade of primary color */
-    --dark-link: #f0c8ff; /* Very light shade of primary color */
+    --dark-h1: #b794f6; /* Soft blueish-magenta for headings */
+    --dark-h2: #d6bcfa; /* Lighter purple */
+    --dark-h3: #e9d8fd; /* Very light purple */
+    --dark-link: #fbb6ce; /* Soft pink */
     --dark-code: #2f2f2f;
-    --dark-code-text: #c578f7; /* Lighter shade of primary color for code */
+    --dark-code-text: #d6bcfa; /* Lighter purple for code */
     --dark-quote: #404040;
-    --dark-quote-text: #e1a0ff; /* Lighter shade of primary color for quotes */
+    --dark-quote-text: #e9d8fd; /* Very light purple for quotes */
         
     /* Sepia Theme */
     --sepia-bg: #e8dcca;
@@ -89,10 +89,10 @@
         background: #222222;
     }
     .sepia #app {
-        background: #444444;
+        background: #77644da4;
     }
     .light #app {
-        background: #444444;
+        background: #68359760;
     }
     
     
@@ -166,7 +166,7 @@
     #file-toolbar button:hover {
         background: var(--hover-color);
         transform: translateY(-3px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     
     /* Dropdown Menus */
@@ -1797,8 +1797,8 @@
     }
 
     .folder-item.selected {
-        background-color: #e3f2fd;
-        border-color: #90caf9;
+        background-color: #f7fafc;
+        border-color: #b794f6;
     }
 
     .folder-item.disabled {
@@ -1831,7 +1831,7 @@
 
     .selected-folder-name {
         font-weight: 500;
-        color: #2196f3;
+        color: #805ad5;
     }
 
     /* Improve SweetAlert dialog for folder tree */
@@ -1942,7 +1942,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: var(--accent-color);
+        color: var(--text-color);
     }
 
     #file-path .separator {
