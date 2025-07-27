@@ -373,13 +373,13 @@ body {
     width: 280px;
     min-width: 280px;
     background: var(--surface-color);
-    border-radius: 12px;
+    border-radius: 4px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     padding: 5px;
     /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-    border-right: 1px solid var(--separator-color);
+    border: 1px solid var(--separator-color);
     transition: all 0.3s ease;
     transform: translateX(0);
     /* opacity: 1; */
@@ -616,7 +616,7 @@ body {
 #markdown-editor,
 .CodeMirror {
     flex: 1;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid var(--separator-color);
     background: var(--bg-color);
     font-family:
@@ -628,6 +628,7 @@ body {
     line-height: 1.6 !important;
     min-width: 0; /* Allow content to shrink */
     overflow-x: auto; /* Add horizontal scroll for long lines */
+    padding: 5px;
 }
 
 .CodeMirror {
@@ -660,15 +661,14 @@ body {
 
 #markdown-preview {
     flex: 1;
-    padding: 10px;
+    padding: 5px;
     overflow-y: auto;
     overflow-x: auto; /* Add horizontal scroll for wide content */
     font-family: "Space Grotesk", sans-serif;
     /* font-size: 15px; */
     /* line-height: 1.6; */
     color: var(--text-color);
-    border-radius: 8px;
-
+    border-radius: 4px;
     font-size: 0.9rem; /* Increase to 16px */
     line-height: 1.5; /* Improve spacing */
 }
@@ -754,7 +754,7 @@ body {
 }
 
 .light .CodeMirror-selected {
-    background: var(--light-hover) !important;
+    background: var(--light-accent) !important;
 }
 
 .light .CodeMirror-gutters {
@@ -791,7 +791,7 @@ body {
 }
 
 .dark .CodeMirror-selected {
-    background: var(--dark-hover) !important;
+    background: var(--dark-h1) !important;
 }
 
 .dark .CodeMirror-gutters {
@@ -828,7 +828,7 @@ body {
 }
 
 .sepia .CodeMirror-selected {
-    background: var(--sepia-hover) !important;
+    background: var(--sepia-accent) !important;
 }
 
 .sepia .CodeMirror-gutters {
@@ -879,7 +879,7 @@ body {
 
 .dark #file-panel {
     background-color: var(--dark-surface);
-    border-right: 1px solid var(--dark-separator);
+    border: 1px solid var(--dark-separator);
 }
 
 .dark #editor-panel {
@@ -978,7 +978,12 @@ body {
 
 .sepia #file-panel {
     background-color: var(--sepia-code-bg);
-    box-shadow: var(--sepia-shadow);
+    border: 1px solid var(--sepia-separator);
+}
+
+.light #file-panel {
+    background-color: var(--light-code-bg);
+    border: 1px solid var(--light-separator);
 }
 
 .sepia #editor-panel,

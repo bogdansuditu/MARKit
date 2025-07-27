@@ -58,7 +58,7 @@ function updatePreview() {
       const pre = codeBlock.parentNode;
       if (pre && pre.tagName === "PRE") {
         // Add classes for Prism.js plugins
-        pre.classList.add("line-numbers");
+        // pre.classList.add("line-numbers");
         codeBlock.classList.add("toolbar");
 
         // Detect language from className or add generic class
